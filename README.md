@@ -27,6 +27,7 @@ Todo eso está en **[docs/00-setup.md](docs/00-setup.md)** — quince minutos, u
 | | |
 |---|---|
 | **[docs/guia.md](docs/guia.md)** | La práctica: un producto con un modelo de lenguaje propio |
+| [docs/en-tu-maquina.md](docs/en-tu-maquina.md) | Hacerlo correr en tu Windows o tu Mac, sin la instancia |
 | `backend/` | Flask. Tres `COMPLETA` que llenas tú |
 | `frontend/` | React + TypeScript con Vite. Dos `COMPLETA` más |
 | `setup/bootstrap.sh` | Deja la instancia lista: Python, Node, Ollama y el modelo |

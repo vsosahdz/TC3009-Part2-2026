@@ -62,7 +62,8 @@ para todos. Esa es media razón de que el curso funcione con 30 laptops distinta
 **Por ahora.** Al final del módulo vas a tener que hacer correr todo esto en tu propia
 máquina, y va a ser un ejercicio, no un paso del setup: no habrá un script que lo haga por ti.
 Para entonces vas a saber exactamente qué necesita el producto para funcionar — y averiguar
-cómo instalarlo en *tu* sistema es justo la prueba de que lo entendiste.
+cómo instalarlo en *tu* sistema es justo la prueba de que lo entendiste. Cuando llegues ahí,
+el mapa está en **[en-tu-maquina.md](en-tu-maquina.md)**.
 
 ### Si usas Windows: Git Bash como terminal de VS Code
 
