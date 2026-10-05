@@ -144,12 +144,88 @@ git remote add origin https://github.com/TU-USUARIO/TU-REPO.git
 git push -u origin main
 ```
 
-Funciona igual, con una diferencia que se nota más adelante: **no tienes el remoto `curso`**,
-así que si publico una corrección tienes que agregarlo a mano para traerla:
+Funciona igual, con una diferencia que se nota en la siguiente sección: **tu repositorio no
+comparte historia con el mío**, así que traer material nuevo se hace de otra forma.
+
+---
+
+## Traer material nuevo del curso
+
+**Esto lo vas a usar varias veces durante el módulo**, porque el material llega por partes: el
+backend primero, el frontend después. No tienes que volver a clonar nada ni empezar de cero —
+y sobre todo, **no vas a perder el código que ya escribiste**.
+
+Cuál de los dos comandos te toca depende de la opción que seguiste arriba. Compruébalo:
 
 ```bash
-git remote add curso https://github.com/vsosahdz/TC3009-Part2-2026.git
+git remote -v
 ```
+
+### Si ves un remoto llamado `curso` (opción A)
+
+```bash
+git fetch curso
+git merge curso/main --no-edit
+```
+
+Y ya. Git junta lo nuevo del curso con lo tuyo. Los archivos que tú escribiste y yo no toqué
+se quedan como están; los que yo añadí aparecen; y si los dos tocamos el mismo archivo en
+sitios distintos —lo normal— git los combina sin preguntarte.
+
+### Si **no** ves `curso` (opción B, el ZIP)
+
+Tu repositorio y el mío son dos árboles sin antepasado común, así que un `merge` ni siquiera
+arranca:
+
+```
+fatal: refusing to merge unrelated histories
+```
+
+No es un error tuyo. Trae los archivos del curso por ruta:
+
+```bash
+git remote add curso https://github.com/vsosahdz/TC3009-Part2-2026.git   # una sola vez
+git fetch curso
+git checkout curso/main -- frontend/ docs/ setup/ run README.md
+```
+
+**`backend/` no está en esa lista, a propósito**: ese archivo lo escribes tú y no se toca.
+
+### En los dos casos, al terminar
+
+```bash
+git add -A
+git commit -m "material nuevo del curso"
+git push
+```
+
+Y en la instancia, para que llegue allí:
+
+```bash
+git pull
+bash setup/bootstrap.sh    # por si el material nuevo necesita algo que no tenías
+./run restart
+```
+
+> **Si ves esto:**
+>
+> ```
+> error: Your local changes to the following files would be overwritten by merge:
+> 	run
+> Please commit your changes or stash them before you merge.
+> ```
+>
+> Tienes cambios sin guardar en un archivo que el curso también cambió. Git **no hizo
+> nada** — te está protegiendo. Guarda lo tuyo y repite:
+>
+> ```bash
+> git add -A && git commit -m "lo mio"
+> git merge curso/main --no-edit
+> ```
+>
+> **Si sale un conflicto de verdad**, git te dice en qué archivo y deja las dos versiones
+> marcadas dentro: la tuya entre `<<<<<<< HEAD` y `=======`, la mía debajo. Borra las marcas,
+> deja el texto como tiene que quedar, y `git add` + `git commit`.
 
 ---
 

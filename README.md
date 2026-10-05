@@ -64,6 +64,16 @@ git add -A && git commit -m "..." && git push
 git pull && ./run restart && ./run salud
 ```
 
+**¿Publiqué material nuevo y lo quieres en tu repositorio?** Dos comandos, y no pierdes nada
+de lo que escribiste:
+
+```bash
+git fetch curso && git merge curso/main --no-edit
+```
+
+Si eso dice que no conoce `curso`, o que son historias sin relación, el caso que te toca está
+en **[docs/00-setup.md → Traer material nuevo del curso](docs/00-setup.md#traer-material-nuevo-del-curso)**.
+
 ---
 
 ## Los puertos
