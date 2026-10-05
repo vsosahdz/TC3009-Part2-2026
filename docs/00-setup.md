@@ -151,47 +151,39 @@ comparte historia con el mío**, así que traer material nuevo se hace de otra f
 
 ## Traer material nuevo del curso
 
-**Esto lo vas a usar varias veces durante el módulo**, porque el material llega por partes: el
-backend primero, el frontend después. No tienes que volver a clonar nada ni empezar de cero —
-y sobre todo, **no vas a perder el código que ya escribiste**.
+**Esto lo vas a usar varias veces durante el módulo**, porque el material llega por partes:
+el backend primero, el frontend después. No hace falta volver a clonar nada ni empezar de
+cero — y sobre todo, **no vas a perder el código que ya escribiste**.
 
-Cuál de los dos comandos te toca depende de la opción que seguiste arriba. Compruébalo:
+Hay dos formas. **Empieza por la primera**: funciona igual para todo el mundo, sin importar
+cómo bajaste el curso ni qué remotos tengas.
 
-```bash
-git remote -v
-```
+### Forma 1 — descargar y copiar (la que siempre funciona)
 
-### Si ves un remoto llamado `curso` (opción A)
+**1. Baja el curso otra vez.** En
+[github.com/vsosahdz/TC3009-Part2-2026](https://github.com/vsosahdz/TC3009-Part2-2026),
+botón verde **Code** → **Download ZIP**. Descomprímelo. Te deja una carpeta llamada
+`TC3009-Part2-2026-main`.
 
-```bash
-git fetch curso
-git merge curso/main --no-edit
-```
-
-Y ya. Git junta lo nuevo del curso con lo tuyo. Los archivos que tú escribiste y yo no toqué
-se quedan como están; los que yo añadí aparecen; y si los dos tocamos el mismo archivo en
-sitios distintos —lo normal— git los combina sin preguntarte.
-
-### Si **no** ves `curso` (opción B, el ZIP)
-
-Tu repositorio y el mío son dos árboles sin antepasado común, así que un `merge` ni siquiera
-arranca:
-
-```
-fatal: refusing to merge unrelated histories
-```
-
-No es un error tuyo. Trae los archivos del curso por ruta:
+**2. Copia a tu proyecto las carpetas del curso.** Puedes arrastrarlas en el explorador de
+archivos, o desde la terminal, estando en tu proyecto:
 
 ```bash
-git remote add curso https://github.com/vsosahdz/TC3009-Part2-2026.git   # una sola vez
-git fetch curso
-git checkout curso/main -- frontend/ docs/ setup/ run README.md
+cp -r ~/Downloads/TC3009-Part2-2026-main/frontend .
+cp -r ~/Downloads/TC3009-Part2-2026-main/docs .
+cp -r ~/Downloads/TC3009-Part2-2026-main/setup .
+cp    ~/Downloads/TC3009-Part2-2026-main/run .
 ```
 
-**`backend/` no está en esa lista, a propósito**: ese archivo lo escribes tú y no se toca.
+> **`backend/` NO se copia.** Esa carpeta es tuya: ahí están los `COMPLETA` que escribiste.
+> Copiarla encima borraría tu trabajo y te devolvería el esqueleto vacío. Es el único error
+> grave que se puede cometer en este paso, así que léelo dos veces.
+>
+> Las otras cuatro sí se copian enteras sin miedo, porque son material del curso y tú no las
+> editas: `frontend/` es el esqueleto nuevo, `docs/` son las guías, `setup/` y `run` son las
+> herramientas.
 
-### En los dos casos, al terminar
+**3. Súbelo a tu repositorio**, desde tu proyecto:
 
 ```bash
 git add -A
@@ -199,13 +191,54 @@ git commit -m "material nuevo del curso"
 git push
 ```
 
-Y en la instancia, para que llegue allí:
+**4. Y tráelo a la instancia:**
 
 ```bash
 git pull
 bash setup/bootstrap.sh    # por si el material nuevo necesita algo que no tenías
 ./run restart
 ```
+
+Comprueba antes de subir que no te llevas por delante tu backend:
+
+```bash
+git status
+```
+
+Si en la lista aparece `backend/app.py`, copiaste de más. Recupéralo con
+`git checkout -- backend/app.py` y vuelve a hacer el `git add`.
+
+### Forma 2 — con git, si te sientes cómodo
+
+Hace lo mismo en dos comandos y sin bajar nada, pero depende de cómo montaste tu
+repositorio. Mira qué remotos tienes:
+
+```bash
+git remote -v
+```
+
+**Si ves uno llamado `curso`** (seguiste la opción A):
+
+```bash
+git fetch curso
+git merge curso/main --no-edit
+```
+
+Git junta lo nuevo del curso con lo tuyo. Lo que tú escribiste y yo no toqué se queda igual;
+lo que yo añadí aparece; y si los dos tocamos el mismo archivo en sitios distintos —lo
+normal— los combina sin preguntarte.
+
+**Si no ves `curso`** (bajaste el ZIP), tu repositorio y el mío no comparten historia y un
+`merge` ni siquiera arranca: `fatal: refusing to merge unrelated histories`. Trae los
+archivos por ruta:
+
+```bash
+git remote add curso https://github.com/vsosahdz/TC3009-Part2-2026.git   # una sola vez
+git fetch curso
+git checkout curso/main -- frontend/ docs/ setup/ run README.md
+```
+
+En los dos casos, termina con `git add -A && git commit -m "..." && git push`.
 
 > **Si ves esto:**
 >
@@ -222,10 +255,6 @@ bash setup/bootstrap.sh    # por si el material nuevo necesita algo que no tení
 > git add -A && git commit -m "lo mio"
 > git merge curso/main --no-edit
 > ```
->
-> **Si sale un conflicto de verdad**, git te dice en qué archivo y deja las dos versiones
-> marcadas dentro: la tuya entre `<<<<<<< HEAD` y `=======`, la mía debajo. Borra las marcas,
-> deja el texto como tiene que quedar, y `git add` + `git commit`.
 
 ---
 

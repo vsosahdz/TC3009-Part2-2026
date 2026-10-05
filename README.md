@@ -64,15 +64,13 @@ git add -A && git commit -m "..." && git push
 git pull && ./run restart && ./run salud
 ```
 
-**¿Publiqué material nuevo y lo quieres en tu repositorio?** Dos comandos, y no pierdes nada
-de lo que escribiste:
+**¿Publiqué material nuevo y lo quieres en tu repositorio?** Bájalo con **Code → Download
+ZIP**, copia a tu proyecto las carpetas del curso —`frontend/`, `docs/`, `setup/` y `run`,
+**nunca `backend/`**, que es tuyo— y haz `add`, `commit` y `push`.
 
-```bash
-git fetch curso && git merge curso/main --no-edit
-```
-
-Si eso dice que no conoce `curso`, o que son historias sin relación, el caso que te toca está
-en **[docs/00-setup.md → Traer material nuevo del curso](docs/00-setup.md#traer-material-nuevo-del-curso)**.
+Paso a paso, con la comprobación de que no te llevas tu código por delante y la forma
+equivalente con git, en **[docs/00-setup.md → Traer material nuevo del
+curso](docs/00-setup.md#traer-material-nuevo-del-curso)**.
 
 ---
 

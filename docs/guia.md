@@ -447,46 +447,36 @@ Son **dos** `COMPLETA` y ningún archivo que escribas de cero: el esqueleto est�
 
 ### Primero, trae el material de la fase 2
 
-Cuando clonaste el curso, `frontend/` todavía no existía. Hay que traerlo, y cómo
-depende de qué opción seguiste en el setup.
+Cuando clonaste el curso, `frontend/` todavía no existía. Hay que traerlo.
 
-**Opción A** — tienes el remoto `curso`. Compruébalo con `git remote -v`:
-
-```bash
-git fetch curso
-git merge curso/main --no-edit
-```
-
-Tu `backend/app.py` **no se pierde**. Lo que cambió del curso en ese archivo son
-comentarios de arriba del todo, lejos de tus `COMPLETA`, y git junta las dos cosas solo.
-Si alguna vez hubiera un conflicto de verdad, git te dice en qué archivo y deja las dos
-versiones marcadas: la tuya va entre `<<<<<<< HEAD` y `=======`.
-
-**Opción B** — bajaste el ZIP, así que tu repositorio no comparte historia con el mío y
-un `merge` ni siquiera arranca:
-
-```
-fatal: refusing to merge unrelated histories
-```
-
-No es un error tuyo, es git diciendo la verdad: son dos árboles distintos. Trae solo los
-archivos del curso, por ruta:
+**Baja el ZIP y copia la carpeta.** En
+[github.com/vsosahdz/TC3009-Part2-2026](https://github.com/vsosahdz/TC3009-Part2-2026),
+botón verde **Code** → **Download ZIP**. Descomprime: te deja una carpeta
+`TC3009-Part2-2026-main`. Copia a tu proyecto estas cuatro cosas —arrastrándolas en el
+explorador de archivos, o desde la terminal estando en tu proyecto:
 
 ```bash
-git remote add curso https://github.com/vsosahdz/TC3009-Part2-2026.git   # una sola vez
-git fetch curso
-git checkout curso/main -- frontend/ docs/ setup/ run README.md
+cp -r ~/Downloads/TC3009-Part2-2026-main/frontend .
+cp -r ~/Downloads/TC3009-Part2-2026-main/docs .
+cp -r ~/Downloads/TC3009-Part2-2026-main/setup .
+cp    ~/Downloads/TC3009-Part2-2026-main/run .
 ```
 
-`backend/` no está en esa lista, a propósito: ese archivo es tuyo. Y usa esto **ahora**,
-antes de tocar el frontend — más adelante sobrescribiría lo que hubieras escrito en
-`frontend/src/`.
+> **`backend/` NO se copia.** Ahí están tus `COMPLETA` de la fase 1. Copiarla encima te
+> devolvería el esqueleto vacío y perderías el trabajo. Es el único error grave de este
+> paso.
 
-**Los dos casos siguen igual.** En tu computadora:
+Comprueba que no te llevaste tu backend por delante, y súbelo:
 
 ```bash
-git add -A && git commit -m "material de la fase 2" && git push
+git status                 # 'backend/app.py' NO debe aparecer en la lista
+git add -A
+git commit -m "material de la fase 2"
+git push
 ```
+
+Si `backend/app.py` sí aparece, copiaste de más: `git checkout -- backend/app.py` y repite
+el `git add`.
 
 Y en la instancia, donde ahora hace falta Node:
 
@@ -496,18 +486,10 @@ bash setup/bootstrap.sh    # ya está casi todo; ahora añade Node y el frontend
 ./run restart
 ```
 
-```
-   frontend/
-     index.html          la página. Cuatro líneas, y una de ellas carga main.tsx
-     vite.config.ts      el servidor de desarrollo: puerto 3000, escucha fuera
-     tsconfig.json       cómo se compila TypeScript
-     package.json        las dependencias, con versiones exactas
-     src/
-       main.tsx          engancha React al <div id="root">
-       styles.css        el aspecto. Tócalo si quieres, no cambia nada de lo demás
-       api.ts            ◀── COMPLETA 4   la costura con el backend
-       App.tsx           ◀── COMPLETA 5   dónde vive la conversación
-```
+> **¿Prefieres hacerlo con git?** Si tienes el remoto `curso`, son dos comandos:
+> `git fetch curso && git merge curso/main --no-edit`. Está explicado, con el caso del ZIP
+> y qué hacer si se queja, en [00-setup.md → Traer material nuevo del
+> curso](00-setup.md#traer-material-nuevo-del-curso).
 
 ### Qué se instaló, y por qué eso
 
