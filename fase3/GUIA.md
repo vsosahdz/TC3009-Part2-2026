@@ -59,22 +59,29 @@ otro lado de la red. Eso último es medio tema de la sesión.
 
 ## 0 · Traer la fase 3 a tu repositorio
 
-Como siempre en esta parte: **no hay fork**. Bajas el material y lo copias a tu propio
-repositorio.
+Como siempre en esta parte: **no hay fork**. Bajas el material y lo subes a un repositorio
+tuyo.
+
+**No hace falta nada de las sesiones anteriores.** `fase3/` es independiente: trae su
+propio backend, su propio entorno y sus propias dependencias. Si no hiciste las fases 1 y
+2, o te quedaron a medias, esta sesión se hace igual.
+
+Mira cuál de los dos casos eres.
+
+### Caso A — ya tienes tu repositorio del curso
 
 **1. Baja el curso.** En
 [github.com/vsosahdz/TC3009-Part2-2026](https://github.com/vsosahdz/TC3009-Part2-2026),
 botón verde **Code** → **Download ZIP**. Descomprime: te deja `TC3009-Part2-2026-main`.
 
-**2. Copia la carpeta nueva** a tu proyecto. Es **una sola**:
+**2. Copia a tu proyecto una sola carpeta:**
 
 ```bash
 cp -r ~/Downloads/TC3009-Part2-2026-main/fase3 .
 ```
 
-> **Hoy solo copias `fase3/`.** No toques `backend/` ni `frontend/`: son de las fases
-> anteriores y no se usan aquí. Esta carpeta es independiente — tiene su propio backend,
-> su propio entorno y sus propias dependencias. Si tu fase 2 quedó a medias, da igual.
+> **Solo `fase3/`.** No toques `backend/` ni `frontend/`: son de las fases anteriores, ahí
+> está tu código y hoy no se usan.
 
 **3. Súbelo:**
 
@@ -85,15 +92,45 @@ git commit -m "fase 3"
 git push
 ```
 
-**4. Y en la instancia:**
+### Caso B — empiezas de cero
+
+**1. Crea tu repositorio.** En GitHub, **New repository**:
+
+- el nombre que quieras, `TC3009-fase3` está bien
+- **Público** — tu instancia lo va a clonar y no tiene credenciales
+- **sin** README, sin `.gitignore`, sin licencia
+
+**2. Baja el curso** (igual que el caso A: **Code** → **Download ZIP**, descomprime).
+
+**3. En tu computadora**, crea el proyecto con la carpeta de hoy dentro:
 
 ```bash
-cd ~/TU-REPO
-git pull
+mkdir TC3009-fase3 && cd TC3009-fase3
+cp -r ~/Downloads/TC3009-Part2-2026-main/fase3 .
+git init
+git add -A
+git commit -m "fase 3"
+git branch -M main
+git remote add origin https://github.com/TU-USUARIO/TC3009-fase3.git
+git push -u origin main
+```
+
+### Los dos casos, en la instancia
+
+```bash
+cd ~
+git clone https://github.com/TU-USUARIO/TU-REPO.git   # si aun no lo tienes ahi
+cd TU-REPO && git pull
 cd fase3
 ```
 
 A partir de aquí, **todos los comandos de esta guía son dentro de `fase3/`**.
+
+> **¿Sin tiempo para crear el repositorio?** Hoy puedes clonar el del curso directamente
+> en la instancia y trabajar ahí:
+> `git clone https://github.com/vsosahdz/TC3009-Part2-2026.git && cd TC3009-Part2-2026/fase3`.
+> Funciona para la sesión, pero **lo que escribas no queda en ningún repositorio tuyo**:
+> al terminar, cópialo a uno antes de apagar la instancia.
 
 ---
 
