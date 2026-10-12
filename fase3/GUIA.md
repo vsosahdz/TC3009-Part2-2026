@@ -236,7 +236,31 @@ psql "$DATABASE_URL" -c "SELECT version();"
 psql "$DATABASE_URL" -f setup/esquema.sql
 ```
 
-Ábrelo y léelo, son 20 líneas. Cuatro decisiones que no son de relleno:
+```
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+```
+
+**Comprueba que de verdad están**, que es un minuto ahora o media hora después:
+
+```bash
+psql "$DATABASE_URL" -c "\dt"
+```
+
+```
+              List of relations
+ Schema |     Name     | Type  |  Owner
+--------+--------------+-------+----------
+ public | conversacion | table | postgres
+ public | mensaje      | table | postgres
+```
+
+> **Si sale `Did not find any relations`**, las tablas se crearon en otra base. Mira lo
+> que va después del último `/` en tu `DATABASE_URL`: ese es el nombre de la base, y tiene
+> que ser el mismo sitio donde acabas de correr el `CREATE TABLE`.
+
+Ahora ábrelo y léelo, son 20 líneas. Cuatro decisiones que no son de relleno:
 
 **`REFERENCES conversacion(id) ON DELETE CASCADE`** — un mensaje no puede apuntar a una
 conversación que no existe, y al borrar una conversación se van sus mensajes. Sin esto
