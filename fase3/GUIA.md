@@ -26,8 +26,8 @@ se recorta del final.
 | **0:10** | Mientras se crea: instalas la fase 3 | 20 min |
 | **0:30** | **Parte A** — guardar conversaciones en PostgreSQL | 70 min |
 | **1:40** | Descanso | 10 min |
-| **1:50** | **Parte B** — LangChain: de texto a datos | 40 min |
-| **2:30** | **Parte C** — LangGraph: un grafo con memoria | 40 min |
+| **1:50** | **Parte B** — LangChain: de texto a datos | 30 min |
+| **2:20** | **Parte C** — LangGraph: un grafo con memoria, y lo escribes tú | 50 min |
 | **3:10** | `bash probar.sh`, y **eliminar la base** | 10 min |
 | **3:20** | Fin | |
 
@@ -324,6 +324,48 @@ Y el idioma: las columnas se llaman `rol` y `contenido` porque son **tuyas**; la
 tienen que ser `role` y `content` porque son del **API de Ollama**. La traducción ocurre
 aquí, en la frontera, y en un solo sitio.
 
+### Para antes de seguir: comprueba `db.py` solo
+
+**No pases al `COMPLETA 3` sin hacer esto.** Son treinta segundos y te ahorran media hora.
+
+Acabas de escribir dos funciones. Si siguieras hasta el final y el chat no recordara,
+tendrías que averiguar si falla el `INSERT`, el `SELECT` o el cableado — tres sospechosos
+a la vez. Aquí solo hay dos, y ni siquiera hace falta arrancar Flask:
+
+```bash
+.venv/bin/python -c "
+import sys; sys.path.insert(0, 'backend')
+import db
+cid = db.crear_conversacion('prueba de db.py', 'qwen2.5:1.5b')
+db.guardar_mensaje(cid, 'user', 'hola')
+db.guardar_mensaje(cid, 'assistant', 'que tal', 7)
+print(db.leer_mensajes(cid))
+"
+```
+
+Tiene que salir **exactamente** esto:
+
+```python
+[{'role': 'user', 'content': 'hola'}, {'role': 'assistant', 'content': 'que tal'}]
+```
+
+| Si sale | Qué pasa |
+| ------- | -------- |
+| `NotImplementedError: COMPLETA 1` | te falta el `INSERT` |
+| `NotImplementedError: COMPLETA 2` | te falta el `SELECT` |
+| `[]`, una lista vacía | el `SELECT` lee, pero el `INSERT` no guardó |
+| `[{'rol': ...` | las claves van en inglés: `role` y `content` |
+| `UndefinedColumn` o `UndefinedTable` | el nombre de una columna o de la tabla |
+
+Y míralo desde el otro lado, que es la gracia:
+
+```bash
+psql "$DATABASE_URL" -c "SELECT id, rol, contenido, tokens FROM mensaje ORDER BY id;"
+```
+
+**Esa es la primera vez que tus datos existen fuera de tu programa.** Puedes apagar el
+proceso, apagar la instancia, y siguen ahí.
+
 ### `COMPLETA 3` — engancharlo
 
 Abre `backend/app.py`. Cuatro pasos dentro del `try`, y el orden importa:
@@ -430,7 +472,7 @@ dejaron de ser un detalle de implementación de tu programa.
 
 ---
 
-## Parte B · LangChain: de texto libre a datos (40 min)
+## Parte B · LangChain: de texto libre a datos (30 min)
 
 Aquí no hay nada que rellenar. Es un ejemplo para **correr, leer y tocar**.
 
@@ -513,7 +555,7 @@ mitad venía primero.
 
 ---
 
-## Parte C · LangGraph: un grafo que decide y recuerda (40 min)
+## Parte C · LangGraph: un grafo que decide y recuerda (50 min)
 
 ```bash
 .venv/bin/python ejemplos/langgraph_enrutador.py "Cuanto cuesta la licuadora?"
@@ -588,6 +630,59 @@ HILO=cliente-7 .venv/bin/python ejemplos/langgraph_enrutador.py "Cuanto cuesta e
 ```
 
 Es el mismo `thread_id` que tu `conversacion_id` de la parte A, con otro nombre.
+
+### Tu turno: añade una cuarta rama (15 min)
+
+Hasta aquí has corrido y leído. Ahora escribe. Abre
+`ejemplos/langgraph_enrutador.py` y añade una categoría **`garantia`** con su propio nodo.
+Son **cinco** sitios, y recorrerlos es lo que te deja el API del grafo en la cabeza:
+
+1. `class Categoria` → añade `"garantia"` al `Literal`
+2. en `clasificar()` → una línea más en el prompt describiendo la categoría
+3. una función nueva `def garantia(estado):` que devuelva un `{"respuesta": ...}`
+4. `rutear()` → mapea `"garantia"` a `"garantia"`, y añádelo al `Literal` del tipo de vuelta
+5. `construir()` → `g.add_node("garantia", garantia)` y mételo en el bucle del `add_edge`
+
+Pruébalo:
+
+```bash
+HILO=g4 .venv/bin/python ejemplos/langgraph_enrutador.py "Cuanto dura la garantia?"
+HILO=g4 .venv/bin/python ejemplos/langgraph_enrutador.py "Puedo devolver el teclado?"
+```
+
+### Lo que vas a encontrar, y es el verdadero ejercicio
+
+**El grafo va a funcionar perfecto. El clasificador no.**
+
+La primera quizá acierte. La segunda casi seguro se va a `otro` o a `soporte`. Medido —
+3 corridas sobre 6 preguntas:
+
+```
+   las 3 categorías originales .... 9/9    perfectas
+   con "garantia" añadida ......... 1/9    casi todo cae en "otro"
+```
+
+Y antes de que lo intentes: **reescribir el prompt no lo arregla.** Probé cambiar la
+descripción por una lista de palabras clave —`garantia, devolver, devolucion, cambio,
+reembolso`— y salió igual de mal. Lo que parecía obvio no funcionó, y esa es media
+lección: en esto se mide, no se opina.
+
+**Por qué pasa.** Un modelo de 1.5B distingue bien tres cajones muy distintos entre sí. El
+cuarto se solapa: «¿puedo devolver el teclado?» es razonablemente soporte, razonablemente
+garantía, y razonablemente ninguna. Al añadir la opción no le diste más capacidad, le
+diste más formas de equivocarse.
+
+**Qué harías tú.** No hay una respuesta, hay tres caminos y los tres son reales:
+
+| Camino | Lo que ganas | Lo que pagas |
+| ------ | ------------ | ------------ |
+| Un modelo más grande | clasifica bien | en una t2.large, segundos por pregunta |
+| Quedarte en 3 categorías | funciona siempre | el producto hace menos |
+| Filtrar antes del modelo: si el texto trae «garantía», «devolver» o «reembolso», ruta directa | instantáneo y exacto | hay que mantener la lista |
+
+El tercero suele ser el que gana en producto real, y es el que nadie enseña. Tu nodo
+`ventas` ya lo hace: contesta de un diccionario sin preguntarle al modelo. **No todo lo
+que parece un problema de IA se resuelve con IA.**
 
 ### La comparación, que es la clase
 
