@@ -159,7 +159,9 @@ fi
 r2=$(curl -s -m 180 -X POST localhost:8080/api/chat -H 'Content-Type: application/json' \
   -d "{\"conversacion_id\":$cid,\"mensaje\":\"Como me llamo?\"}")
 texto=$(echo "$r2" | "$PY" -c "import sys,json; print(json.load(sys.stdin).get('respuesta',''))" 2>/dev/null)
-if echo "$texto" | grep -qi "victor"; then
+# El modelo escribe "Victor" o "Víctor" segun le da, y eso no puede decidir
+# si la prueba pasa: un alumno con el codigo bien veria un FALLA inventado.
+if echo "$texto" | grep -qiE "v[ií]ctor"; then
   ok "segundo mensaje: recuerda el nombre"
   echo "        \"$(echo "$texto" | head -c 90)\""
 else
@@ -189,7 +191,7 @@ done
 r3=$(curl -s -m 180 -X POST localhost:8080/api/chat -H 'Content-Type: application/json' \
   -d "{\"conversacion_id\":$cid,\"mensaje\":\"Repite mi nombre.\"}")
 t3=$(echo "$r3" | "$PY" -c "import sys,json; print(json.load(sys.stdin).get('respuesta',''))" 2>/dev/null)
-if echo "$t3" | grep -qi "victor"; then
+if echo "$t3" | grep -qiE "v[ií]ctor"; then
   ok "proceso NUEVO, memoria cero, y sigue recordando"
   echo "        \"$(echo "$t3" | head -c 90)\""
 else
